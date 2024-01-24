@@ -7,29 +7,12 @@ from users.serializers import UserSerializer
 from users.models import User, Profile
 import jwt, datetime
 
-# class RegisterAPIView(APIView):
-#     def post(self, request):
-#         serializer = UserSerializer(data=request.data)
-#         if serializer.is_valid(raise_exception=True):
-#             serializer.save()
-#             profile = Profile(user=UserSerializer)
-#         return Response(serializer.data, profile)
-
-@api_view(['POST'])
-def create_auth(request):
-    serializer = UserSerializer(data=request.POST)
-    if serializer.is_valid():
-        User.objects.create_user(
-            serializer.init_data['email'],
-            serializer.init_data['password'],
-        )
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-    else:
-        return Response(serializer._errors, status=status.HTTP_400_BAD_REQUEST)
-    
-@api_view(['POST'])
-def login(request):
-    pass
+class RegisterAPIView(APIView):
+    def post(self, request):
+        serializer = UserSerializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+            return Response(serializer.data)
 
 class LoginAPIView(APIView):
     def post(self, request):
@@ -45,12 +28,11 @@ class LoginAPIView(APIView):
             raise AuthenticationFailed('Не коректный пароль!')
 
         payload = {
-            'id': user.id,
             'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=60),
             'iat': datetime.datetime.utcnow()
         }
 
-        token = jwt.encode(payload, 'secret', algorithm='HS256').decode('utf-8')
+        token = jwt.encode(payload, 'secret', algorithm='HS256')#.decode('utf-8')
 
         response = Response()
 
@@ -68,7 +50,7 @@ class UserAPIView(APIView):
             raise AuthenticationFailed('Unauthenticated!')
 
         try:
-            payload = jwt.decode(token, 'secret', algorithm=['HS256'])
+            payload = jwt.decode(token, 'secret', algorithms=['HS256'])
         except jwt.ExpiredSignatureError:
             raise AuthenticationFailed('Unauthenticated!')
 

@@ -3,12 +3,13 @@ from django.contrib.auth.models import AbstractUser
 
 class User(AbstractUser):
     email = models.EmailField(unique=True, primary_key=True)
+    username = models.CharField(max_length=50, null=True, blank=True)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
     
     def __str__(self):
-        return self.username
+        return self.email
 
     class Meta:
         verbose_name = 'Пользователь'
@@ -16,11 +17,11 @@ class User(AbstractUser):
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    biography = models.TextField()
-    phone = models.IntegerField()
+    biography = models.TextField(null=True, blank=True)
+    phone = models.IntegerField(null=True, blank=True)
 
     def __str__(self):
-        return self.user.username
+        return self.user.email
 
     class Meta:
         verbose_name = 'Профиль'

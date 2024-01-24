@@ -1,20 +1,12 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
-class Role:
-    roles = (
-        ('c', 'Client'),
-        ('m', 'Master'),
-    )
-    role_is_registration = models.CharField(max_length=20, choices=roles)
-
 class User(AbstractUser):
-    username = models.CharField(max_length=255, primary_key=True)
-    email = models.EmailField(unique=True)
-    description = models.TextField()
-    password = models.CharField(max_length=255)
-    created_at = models.DateTimeField(auto_now_add=True)
+    email = models.EmailField(unique=True, primary_key=True)
 
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['username']
+    
     def __str__(self):
         return self.username
 
@@ -22,6 +14,14 @@ class User(AbstractUser):
         verbose_name = 'Пользователь'
         verbose_name_plural = 'Пользователи'
 
-    USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['username']
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    biography = models.TextField()
+    phone = models.IntegerField()
 
+    def __str__(self):
+        return self.user.username
+
+    class Meta:
+        verbose_name = 'Профиль'
+        verbose_name_plural = 'Профили'

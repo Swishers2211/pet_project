@@ -1,16 +1,35 @@
 from rest_framework.views import APIView
+from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.exceptions import AuthenticationFailed
+from rest_framework import status
 from users.serializers import UserSerializer
-from users.models import User
+from users.models import User, Profile
 import jwt, datetime
 
-class RegisterAPIView(APIView):
-    def post(self, request):
-        serializer = UserSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data)
+# class RegisterAPIView(APIView):
+#     def post(self, request):
+#         serializer = UserSerializer(data=request.data)
+#         if serializer.is_valid(raise_exception=True):
+#             serializer.save()
+#             profile = Profile(user=UserSerializer)
+#         return Response(serializer.data, profile)
+
+@api_view(['POST'])
+def create_auth(request):
+    serializer = UserSerializer(data=request.POST)
+    if serializer.is_valid():
+        User.objects.create_user(
+            serializer.init_data['email'],
+            serializer.init_data['password'],
+        )
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    else:
+        return Response(serializer._errors, status=status.HTTP_400_BAD_REQUEST)
+    
+@api_view(['POST'])
+def login(request):
+    pass
 
 class LoginAPIView(APIView):
     def post(self, request):
@@ -42,7 +61,6 @@ class LoginAPIView(APIView):
         return response
 
 class UserAPIView(APIView):
-
     def get(self, request):
         token = request.COOKIES.get('jwt')
 

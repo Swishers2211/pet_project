@@ -1,12 +1,12 @@
 from rest_framework.views import APIView
-from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework import status
-from users.serializers import UserSerializer
-from users.models import User, Profile
+from users.serializers import UserSerializer, ProfileSerializer
+from users.models import User
 import jwt, datetime
 
+'''Регистрация аккаунта'''
 class RegisterAPIView(APIView):
     def post(self, request):
         serializer = UserSerializer(data=request.data)
@@ -14,6 +14,7 @@ class RegisterAPIView(APIView):
             serializer.save()
             return Response(serializer.data)
 
+'''Вход в аккаунт по почте'''
 class LoginAPIView(APIView):
     def post(self, request):
         email = request.data['email']
@@ -28,6 +29,7 @@ class LoginAPIView(APIView):
             raise AuthenticationFailed('Не коректный пароль!')
 
         payload = {
+            'id': user.email,
             'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=60),
             'iat': datetime.datetime.utcnow()
         }
@@ -42,22 +44,24 @@ class LoginAPIView(APIView):
         }
         return response
 
+'''Профиль пользоателя'''
 class UserAPIView(APIView):
     def get(self, request):
         token = request.COOKIES.get('jwt')
 
         if not token:
-            raise AuthenticationFailed('Unauthenticated!')
+            raise AuthenticationFailed('Не найден!')
 
         try:
             payload = jwt.decode(token, 'secret', algorithms=['HS256'])
         except jwt.ExpiredSignatureError:
-            raise AuthenticationFailed('Unauthenticated!')
+            raise AuthenticationFailed('Не найден!')
 
-        user = User.objects.filter(id=payload['id']).first()
-        serializer = UserSerializer(user)
+        user = User.objects.filter(email=payload['id']).first()
+        serializer = ProfileSerializer(user)
         return Response(serializer.data)
 
+'''Выход из аккаунта'''
 class LogoutAPIView(APIView):
     def post(self, request):
         response = Response()

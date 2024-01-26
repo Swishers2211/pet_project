@@ -16,3 +16,23 @@ class User(AbstractUser):
     class Meta:
         verbose_name = 'Пользователь'
         verbose_name_plural = 'Пользователи'
+
+class Client(models.Model):
+    client = models.OneToOneField(User, on_delete=models.CASCADE, verbose_name='Пользователь')
+    
+    def __str__(self):
+        return self.client.user.email
+
+    class Meta:
+        verbose_name = 'Клиент'
+        verbose_name_plural = 'Клиенты'
+
+class Master(models.Model):
+    master = models.OneToOneField(User, on_delete=models.CASCADE, verbose_name='Пользователь')
+    
+    def __str__(self):
+        return self.master.user.email
+
+    class Meta:
+        verbose_name = 'Фрилансер'
+        verbose_name_plural = 'Фрилансеры'

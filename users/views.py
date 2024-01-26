@@ -43,12 +43,11 @@ class LoginAPIView(APIView):
             'jwt': token
         }
         return response
-
+    
 '''Профиль пользоателя'''
 class UserAPIView(APIView):
-    def get(self, request):
+    def get(self, request, pk):
         token = request.COOKIES.get('jwt')
-
         if not token:
             raise AuthenticationFailed('Не найден!')
 
@@ -57,7 +56,11 @@ class UserAPIView(APIView):
         except jwt.ExpiredSignatureError:
             raise AuthenticationFailed('Не найден!')
 
-        user = User.objects.filter(email=payload['id']).first()
+        try:
+            user = User.objects.get(email=payload['id'], pk=pk)
+        except:
+            raise AuthenticationFailed('Пользователь не найден!')
+        
         serializer = ProfileSerializer(user)
         return Response(serializer.data)
 
@@ -67,6 +70,6 @@ class LogoutAPIView(APIView):
         response = Response()
         response.delete_cookie('jwt')
         response.data = {
-            'message': 'success'
+            'message': 'Вы вышли из аккаунта'
         }
         return response

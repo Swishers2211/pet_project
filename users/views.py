@@ -1,10 +1,12 @@
+from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework import status
+import jwt, datetime
+
 from users.serializers import UserSerializer, ProfileSerializer
 from users.models import User
-import jwt, datetime
 
 '''Регистрация аккаунта'''
 class RegisterAPIView(APIView):
@@ -44,25 +46,33 @@ class LoginAPIView(APIView):
         }
         return response
     
-'''Профиль пользоателя'''
 class UserAPIView(APIView):
+    """Просмотр профиля"""
     def get(self, request, pk):
-        token = request.COOKIES.get('jwt')
+        # получение токена может ли пользователь изменять данную страницу
+        token = request.COOKIES.get("jwt")
+
         if not token:
-            raise AuthenticationFailed('Не найден!')
+            raise AuthenticationFailed("Не найден!")
 
         try:
-            payload = jwt.decode(token, 'secret', algorithms=['HS256'])
+            payload = jwt.decode(token, "secret", algorithms=["HS256"])
         except jwt.ExpiredSignatureError:
-            raise AuthenticationFailed('Не найден!')
+            raise AuthenticationFailed("Не найден!")
 
-        try:
-            user = User.objects.get(email=payload['id'], pk=pk)
-        except:
-            raise AuthenticationFailed('Пользователь не найден!')
-        
+        # конец получения токена
+
+        user = get_object_or_404(User, pk=pk)
+
+        if payload["id"] == user.email:
+            res = {"is_my": 1}
+        else:
+            res = {"is_my": 0}
+
         serializer = ProfileSerializer(user)
-        return Response(serializer.data)
+
+        res.update(serializer.data)
+        return Response(res)
 
 '''Выход из аккаунта'''
 class LogoutAPIView(APIView):
@@ -73,3 +83,4 @@ class LogoutAPIView(APIView):
             'message': 'Вы вышли из аккаунта'
         }
         return response
+

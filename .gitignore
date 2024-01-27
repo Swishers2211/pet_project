@@ -1,5 +1,5 @@
-home/__pycache__
-users/__pycache__
-db.sqlite3
-static
-static_dirs
+**/__pycache__
+*.sqlite3
+**/.venv
+
+/static

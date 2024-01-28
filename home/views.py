@@ -11,6 +11,7 @@ from home.serializer import ProjectSerializer
 from users.models import User
 from home.models import Project
 
+'''Просмотр всех проектов, которые опубликовал клиент'''
 class MyProjectsAPIView(APIView):
     def get(self, request):
         token = request.COOKIES.get("jwt")
@@ -22,13 +23,57 @@ class MyProjectsAPIView(APIView):
             payload = jwt.decode(token, "secret", algorithms=["HS256"])
         except jwt.ExpiredSignatureError:
             raise AuthenticationFailed("Вы не авторизованы!")
-        # конец получения токена
         
         user = User.objects.get(email=payload['id']) 
         if user.active_role == 'C':
-            project = Project.objects.filter(user=user)
+            project = Project.objects.filter(user=user).order_by('-published')# вывод по дате от нового до старого
         else:
             raise AuthenticationFailed("Вы не клиент")
         
         serializer = ProjectSerializer(project, many=True)
+        return Response(serializer.data)
+
+'''Клиент публикует свой проект'''
+class CreateProjectAPIView(APIView):
+    def get(self, request):
+        token = request.COOKIES.get("jwt")
+        if not token:
+            raise AuthenticationFailed("Вы не авторизованы!")
+        try:
+            payload = jwt.decode(token, "secret", algorithms=["HS256"])
+        except jwt.ExpiredSignatureError:
+            raise AuthenticationFailed("Вы не авторизованы!")
+    
+        user = User.objects.get(email=payload['id'])
+        if user.active_role == 'C':
+            projects = print('Вы клиент')
+        else:
+            raise AuthenticationFailed("Вы не клиент")
+        
+        return Response(projects)
+    
+    def post(self, request): # публикация происходит в этой функции
+        serializer = ProjectSerializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+        return Response(serializer.data)
+
+'''Позволяет Мастеру найти работу (проект, который опубликовал клиенит)'''
+class FindJobAPIView(APIView):
+    def get(self, request):
+        token = request.COOKIES.get("jwt")
+        if not token:
+            raise AuthenticationFailed("Вы не авторизованы!")
+        try:
+            payload = jwt.decode(token, "secret", algorithms=["HS256"])
+        except jwt.ExpiredSignatureError:
+            raise AuthenticationFailed("Вы не авторизованы!")
+    
+        user = User.objects.get(email=payload['id'])
+        if user.active_role == 'M':
+            projects = Project.objects.all().order_by('-published')
+        else:
+            raise AuthenticationFailed("Вы не мастер")
+        
+        serializer = ProjectSerializer(projects, many=True)
         return Response(serializer.data)

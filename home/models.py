@@ -40,7 +40,7 @@ class Sub_Category(models.Model):
         verbose_name = 'Подкатегория'
         verbose_name_plural = 'Подкатегории'
 
-'''Клиент предлогает проект для работы мастеру'''
+'''Клиент может выставить свой проект'''
 class Project(models.Model):
     name = models.CharField(max_length=128, verbose_name='Название')
     description = models.TextField(verbose_name='Описание')
@@ -51,10 +51,23 @@ class Project(models.Model):
     sub_category = models.ForeignKey(Sub_Category, on_delete=models.CASCADE, verbose_name='Категория')
     price = models.DecimalField(max_digits=7, decimal_places=0, verbose_name='Цена')
     published = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
+    
+    def __str__(self):  
         return self.name
 
     class Meta:
         verbose_name = 'Проект'
         verbose_name_plural = 'Проекты'
+
+'''Отклики на проект (у мастера и клиента)'''
+class Respond(models.Model):
+    project = models.ForeignKey(Project, on_delete=models.CASCADE, verbose_name='Проект')
+    master = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Мастер')
+    published = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):  
+        return self.project.name
+
+    class Meta:
+        verbose_name = 'Отклик'
+        verbose_name_plural = 'Отклики'

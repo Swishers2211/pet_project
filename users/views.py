@@ -5,13 +5,13 @@ from rest_framework.exceptions import AuthenticationFailed
 from rest_framework import status
 import jwt, datetime
 
-from users.serializers import UserSerializer, ProfileSerializer
+from users.serializers import RegisterSerializer, ProfileSerializer
 from users.models import User
 
 '''Регистрация аккаунта'''
 class RegisterAPIView(APIView):
     def post(self, request):
-        serializer = UserSerializer(data=request.data)
+        serializer = RegisterSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
             return Response(serializer.data)

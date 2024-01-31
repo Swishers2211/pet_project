@@ -1,5 +1,4 @@
-home/__pycache__
-users/__pycache__
+**/__pycache__
+users/migrations/__pycache__
 **db.sqlite3
-home/migrations
-users/migrations
+.venv

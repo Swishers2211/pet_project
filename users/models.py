@@ -61,8 +61,16 @@ class Skils(models.Model):
         return self.name
 
     class Meta:
-        verbose_name = "Скил"
-        verbose_name_plural = "Скилы"
+        verbose_name = "Навык"
+        verbose_name_plural = "Навыки"
+
+
+class PortfolioPhoto(models.Model):
+    image = models.ImageField(upload_to="portfolio/")
+
+    class Meta:
+        verbose_name = "Фотография"
+        verbose_name_plural = "Фотографии"
 
 
 class Portfolio(models.Model):
@@ -72,6 +80,7 @@ class Portfolio(models.Model):
     )
     descriptions = models.TextField()
     link = models.URLField("Ссылка на работу", max_length=200)
+    photos = models.ManyToManyField(PortfolioPhoto, verbose_name="фотографии")
 
     def __str__(self):
         return self.title
@@ -79,14 +88,3 @@ class Portfolio(models.Model):
     class Meta:
         verbose_name = "Портфолио"
         verbose_name_plural = "Портфолио"
-
-
-class PortfolioPhoto(models.Model):
-    portfolio = models.ForeignKey(
-        Portfolio, verbose_name="portfolio", on_delete=models.CASCADE
-    )
-
-    image = models.ImageField(upload_to="portfolio/")
-
-    def get_path(self):
-        return f"portfolio/{self.portfolio__title}"

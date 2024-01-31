@@ -29,6 +29,7 @@ INSTALLED_APPS = [
     "users",
     "home",
     'chat',
+    'debug_toolbar',
 ]
 
 MIDDLEWARE = [
@@ -40,6 +41,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
 ]
 
 ROOT_URLCONF = "masters_guild.urls"
@@ -122,3 +124,9 @@ AUTH_USER_MODEL = "users.User"
 
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True
+
+INTERNAL_IPS = [
+    # ...
+    "127.0.0.1",
+    # ...
+]

@@ -7,3 +7,4 @@ pillow==10.2.0
 PyJWT==2.8.0
 pytz==2023.4
 sqlparse==0.4.4
+django-debug-toolbar==4.2.0

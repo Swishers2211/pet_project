@@ -44,7 +44,7 @@ class Sub_Category(models.Model):
 class Project(models.Model):
     name = models.CharField(max_length=128, verbose_name='Название')
     description = models.TextField(verbose_name='Описание')
-    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Пользователь')
+    client = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Пользователь')
     image = models.ImageField(upload_to='project_image', verbose_name='Фото проекта', null=True, blank=True)
     main_category = models.ForeignKey(Main_Category, on_delete=models.CASCADE, verbose_name='Главная категория')
     category = models.ForeignKey(Category, on_delete=models.CASCADE, verbose_name='Категория')

@@ -23,7 +23,6 @@ class LoginAPIView(APIView):
         password = request.data['password']
 
         user = User.objects.filter(email=email).first()
-
         if user is None:
             raise AuthenticationFailed('Пользователь не найден!')
 
@@ -63,7 +62,6 @@ class UserAPIView(APIView):
         # конец получения токена
 
         user = get_object_or_404(User, pk=pk)
-
         if payload["id"] == user.email:
             res = {"is_my": 1}
         else:

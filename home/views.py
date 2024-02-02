@@ -24,9 +24,9 @@ class MyProjectsAPIView(APIView):
         except jwt.ExpiredSignatureError:
             raise AuthenticationFailed("Вы не авторизованы!")
         
-        user = User.objects.get(email=payload['id']) 
+        user = get_object_or_404(User, email=payload['id']) 
         if user.active_role == 'C':
-            project = Project.objects.filter(user=user).order_by('-published')# вывод по дате от нового до старого
+            project = Project.objects.filter(client=user).order_by('-published')# вывод по дате от нового до старого
         else:
             raise AuthenticationFailed("Вы не клиент!")
         
@@ -43,7 +43,7 @@ class CreateProjectAPIView(APIView):
             payload = jwt.decode(token, "secret", algorithms=["HS256"])
         except jwt.ExpiredSignatureError:
             raise AuthenticationFailed("Вы не авторизованы!")
-    
+
         user = User.objects.get(email=payload['id'])
         if user.active_role == 'C':
             projects = print('Вы клиент')
@@ -68,10 +68,10 @@ class FindJobAPIView(APIView):
             payload = jwt.decode(token, "secret", algorithms=["HS256"])
         except jwt.ExpiredSignatureError:
             raise AuthenticationFailed("Вы не авторизованы!")
-    
-        user = User.objects.get(email=payload['id'])
+
+        user = User.objects.get(email=payload['id']) 
         if user.active_role == 'M':
-            projects = Project.objects.all().order_by('-published')
+            projects = Project.objects.all().order_by('-published')#.select_related('user', 'main_category', 'category', 'sub_category')
         else:
             raise AuthenticationFailed("Вы не мастер!")
         
@@ -97,7 +97,7 @@ class DetailProjectAPIView(APIView):
                 raise Http404('Проект не найден!')
         else:
             try:
-                project = Project.objects.get(user=user, pk=pk)
+                project = Project.objects.get(client=user, pk=pk)
             except:
                 raise Http404('Проект не найден!')
 

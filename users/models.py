@@ -13,7 +13,6 @@ class ProjectMaster(models.Model):
 class ProjectClient(models.Model):
     name = models.CharField(max_length=150)
 
-
 class User(AbstractUser):
     email = models.EmailField(unique=True, verbose_name="Почта")
     username = models.CharField(max_length=50, null=True, blank=True, verbose_name="Имя пользователя")

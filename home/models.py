@@ -62,6 +62,7 @@ class Project(models.Model):
 '''Отклики на проект (у мастера и клиента)'''
 class Respond(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE, verbose_name='Проект')
+    description = models.TextField(verbose_name='Опишите себя и свой опыт')
     master = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Мастер')
     published = models.DateTimeField(auto_now_add=True)
 

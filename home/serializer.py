@@ -17,7 +17,6 @@ class ProjectCreateSerializer(serializers.ModelSerializer):
             attrs['client'] = self.context['client']
             return attrs
 
-
 class RespondSerializer(serializers.ModelSerializer):
     class Meta:
         model = Respond

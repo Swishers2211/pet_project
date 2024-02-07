@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from users.models import User
+from users.models import User, Portfolio
 
 class RegisterSerializer(serializers.ModelSerializer):
     class Meta:
@@ -22,3 +22,15 @@ class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['active_role', 'username', 'email', 'description', 'phone']
+
+# class PortfolioPhotoSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = PortfolioPhoto
+#         fields = [
+#             "image",
+#         ]
+
+class PortfolioSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Portfolio
+        fields = ["title", "user", "descriptions", "link", "images"]

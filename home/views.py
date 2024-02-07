@@ -82,7 +82,7 @@ class FindJobAPIView(APIView):
 
         master = User.objects.get(email=payload['id']) 
         if master.active_role == 'M':
-            projects = Project.objects.all().order_by('-published')#.select_related('user', 'main_category', 'category', 'sub_category')
+            projects = Project.objects.all().order_by('-published')
         else:
             raise AuthenticationFailed("Вы не мастер!")
         

@@ -5,8 +5,8 @@ from rest_framework.exceptions import AuthenticationFailed
 from rest_framework import status
 import jwt, datetime
 
-from users.serializers import RegisterSerializer, ProfileSerializer
-from users.models import User
+from users.serializers import RegisterSerializer, ProfileSerializer, PortfolioSerializer
+from users.models import User, Portfolio
 
 '''Регистрация аккаунта'''
 class RegisterAPIView(APIView):
@@ -82,3 +82,14 @@ class LogoutAPIView(APIView):
         }
         return response
 
+class PortfolioAPIView(APIView):
+    def get(self, request):
+        if request.user.is_authenticated:
+            data = Portfolio.objects.get(pk=request.user.id)
+            images = data.img.all()
+            data.delete("photos")
+            data.update(images)
+            serializer = PortfolioSerializer(data)
+            return Response(serializer.data)
+        else:
+            return {}

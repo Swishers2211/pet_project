@@ -4,7 +4,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework import status
-import jwt, datetime
+import jwt
 
 from home.serializer import ProjectSerializer, RespondSerializer, RespondCreateSerializer, ProjectCreateSerializer
 

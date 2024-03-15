@@ -1,4 +1,5 @@
 from django.shortcuts import get_object_or_404
+from django.core.cache import cache
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.exceptions import AuthenticationFailed
@@ -61,7 +62,13 @@ class UserAPIView(APIView):
 
         # конец получения токена
 
-        user = get_object_or_404(User, pk=pk)
+        user_cache_name = 'user_cache'
+        user_cache = cache.get(user_cache_name)
+        if user_cache:
+            user = user_cache
+        else:
+            user = get_object_or_404(User, pk=pk)
+            cache.set(user_cache, user, 20)
         if payload["id"] == user.email:
             res = {"is_my": 1}
         else:

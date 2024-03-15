@@ -19,9 +19,14 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     environment:
-      - POSTGRES_DB=tasks_db
-      - POSTGRES_USER=ray
-      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+
+  redis:
+      image: redis:latest
+      ports:
+      - "6379:6379"
 
 volumes:
   postgres_data:

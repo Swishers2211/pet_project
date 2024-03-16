@@ -19,14 +19,19 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     environment:
-      - POSTGRES_DB=postgres
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=${SQL_NAME}
+      - POSTGRES_USER=${SQL_USER}
+      - POSTGRES_PASSWORD=${SQL_PASSWORD}
+      - POSTGRES_HOST=${HOST}
+      - POSTGRES_PORT=${PORT}
 
   redis:
-      image: redis:latest
-      ports:
+    image: redis:latest
+    ports:
       - "6379:6379"
+    environment:
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+    command: redis-server --requirepass ${REDIS_PASSWORD}
 
 volumes:
   postgres_data:

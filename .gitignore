@@ -5,7 +5,7 @@
 __pycache__
 db.sqlite3
 media
-database
+start.sh
 
 # Backup files # 
 *.bak 

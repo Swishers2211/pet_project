@@ -11,7 +11,7 @@ from chat.routing import websocket_urlpatterns
 
 import chat.routing
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'hillspay.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'new_project.settings')
 
 django_asgi_app = get_asgi_application()
 

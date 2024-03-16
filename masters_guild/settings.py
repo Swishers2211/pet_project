@@ -80,15 +80,14 @@ DATABASES = {
     }
 }
 
+REDIS_PASSWORD = os.getenv("REDIS_PASSWORD")
+
 CACHES = {
     "default": {
-        "BACKEND": "django.core.cache.backends.redis.RedisCache",
-        "LOCATION": "redis://127.0.0.1:6379",
-        "OPTIONS": {
-                "db": "1",
-            }
-        }
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": f"redis://:{REDIS_PASSWORD}@backend-redis-1:6379/1",
     }
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
@@ -149,9 +148,9 @@ INTERNAL_IPS = [
 
 CHANNEL_LAYERS = {
     "default": {
-        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "BACKEND": "django_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [("127.0.0.1", 6379)],
+            "hosts": [("backend-redis-1", 6379)],
         },
     },
 }

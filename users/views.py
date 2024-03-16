@@ -61,14 +61,16 @@ class UserAPIView(APIView):
             raise AuthenticationFailed("Вы не авторизованы!")
 
         # конец получения токена
-
-        user_cache_name = 'user_cache'
+        user_cache_name = ('user_cache')
         user_cache = cache.get(user_cache_name)
         if user_cache:
             user = user_cache
         else:
             user = get_object_or_404(User, pk=pk)
-            cache.set(user_cache, user, 20)
+            cache.set(user_cache_name, user, 30)
+            if user != user_cache:
+                cache.delete(user_cache_name)
+            
         if payload["id"] == user.email:
             res = {"is_my": 1}
         else:

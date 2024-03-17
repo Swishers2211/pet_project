@@ -68,8 +68,6 @@ class UserAPIView(APIView):
         else:
             user = get_object_or_404(User, pk=pk)
             cache.set(user_cache_name, user, 30)
-            if user != user_cache:
-                cache.delete(user_cache_name)
             
         if payload["id"] == user.email:
             res = {"is_my": 1}

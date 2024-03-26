@@ -1,0 +1,9 @@
+What technologies are used
+Python==3.12
+Django==4.2
+Git==latest
+PostgreSQL==latest
+Docker==latest
+Redis==latest
+Nginx==latest
+Celery==latest

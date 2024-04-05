@@ -8,7 +8,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "%1hl^rjd=bh!5gxi7my54h^lk7(dk-*y8%4qzgnihf-b+y#u0i"
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -31,6 +31,7 @@ INSTALLED_APPS = [
     "home",
     'chat',
     'debug_toolbar',
+    'django_celery_results'
 ]
 
 MIDDLEWARE = [
@@ -80,12 +81,15 @@ DATABASES = {
     }
 }
 
-REDIS_PASSWORD = os.getenv("REDIS_PASSWORD")
+REDIS_PASSWORD = os.environ.get("REDIS_PASSWORD")
+
+CELERY_CACHE_BACKEND = 'django-cache'
+CELERY_CACHE_BACKEND = 'default'
 
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": f"redis://:{REDIS_PASSWORD}@backend-redis-1:6379/1",
+        "LOCATION": f"redis://:{REDIS_PASSWORD}@redis:6379/1",
     }
 }
 
@@ -136,13 +140,17 @@ AUTH_USER_MODEL = "users.User"
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True
 
-INTERNAL_IPS = ['172.22.0.0/16']
+INTERNAL_IPS = ['backend-web-1']
 
 CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "django_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [("backend-redis-1", 6379)],
+            "hosts": [("redis_backend", 6379)],
         },
     },
 }
+
+CELERY_BROKER_URL = os.environ.get('CELERY_BROKER', f"redis://:{REDIS_PASSWORD}@redis:6379/0")
+CELERY_RESULT_BACKEND = os.environ.get('CELERY_BROKER', f"redis://:{REDIS_PASSWORD}@redis:6379/0")
+CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = os.environ.get('CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP')

@@ -31,6 +31,7 @@ services:
 
   redis:
     image: redis:latest
+    container_name: redis
     ports:
       - "6379:6379"
     networks:
@@ -50,6 +51,25 @@ services:
       - backend-web
     depends_on:
       - web
+
+  celery:
+    build:
+      context: .
+    command: celery -A masters_guild worker -l info
+    volumes:
+      - .:/app
+    networks:
+      - backend-web
+    depends_on:
+      - web
+      - postgres_db
+      - redis
+    environment:
+      - DEBUG=1
+      - CELERY_BROKER=${CELERY_BROKER_URL}
+      - CELERY_BACKEND=${CELERY_BACKEND}
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP=${CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP}
 
 networks:
   backend-web:

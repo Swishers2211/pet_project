@@ -48,7 +48,7 @@ class DialogAPIView(APIView):
         
         room = Room.objects.filter(pk=pk).first()
         
-        if not (payload['id'] == room.sender.email or payload['id'] == room.receiver.email):
+        if (payload['id'] != room.sender.email or payload['id'] != room.receiver.email):
             raise AuthenticationFailed('Вы не состоите в этом чате!')
         
         messages = Message.objects.filter(room=pk).order_by('-created_at')
